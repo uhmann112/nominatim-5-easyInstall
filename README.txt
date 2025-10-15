@@ -68,9 +68,9 @@ Scripts expect the user VMadmin by default. If your username differs, update it 
 
 Activate the virtual environment:
 
-the install.sh script will heve createt shortcuts vor running the server and starting the venv.
+the install.sh script will have created shortcuts for running the server and starting the venv.
 
-type nvenv to start the virtual envirement
+type nvenv to start the virtual environment
 
 to test if the servers are running type nserve  and then exit with ctlr + C to stop.
 
@@ -79,11 +79,11 @@ to test if the servers are running type nserve  and then exit with ctlr + C to s
 Workflow
 
 Import datasets
-Each dataset (e.g., data1, data2) must be imported into a separate PostgreSQL database.
+put your osm downloadlinks in info.txt (1 link per row, no empty rows!!!), then run the MASTER.py script
 This step creates all necessary tables, including import_status, placex, and others required for geocoding.
 
 Run reverse geocoding
-After datasets are imported, reverse.py or MASTER.py can be run to generate full address lists.
+After datasets are imported, reverse.py  can be run to generate full address lists.
 The output CSV files include:
 
 Coordinates (lat, lon)
@@ -98,7 +98,7 @@ Post-processing
 After all CSV files are generated, PostgreSQL databases can be deleted if you want to start a fresh import.
 
 Notes
-if something with the servers doesn´t seem right:
+if something with the servers doesn´t seem right:   
 Make sure the Nominatim server is not running multiple instances on the same port, or the scripts will fail to start.
 
 
