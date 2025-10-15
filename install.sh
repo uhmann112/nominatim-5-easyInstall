@@ -90,8 +90,6 @@ sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='VMadmin'" | gre
 
 sudo -u postgres psql -c "ALTER USER VMadmin WITH PASSWORD 'Qwdg2302';"
 
-echo "alias nvenv='source ~/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> ~/.bashrc
-source ~/.bashrc
+echo "alias nvenv='source /home/VMadmin/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> /home/VMadmin/.bashrc
+echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve'" >> /home/VMadmin/.bashrc
 
-echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve'" >> ~/.bashrc
-source ~/.bashrc
