@@ -1,21 +1,112 @@
-To make the install.sh script executable, first install dos2unix with
-"sudo apt install dos2unix". Then make the script executable with
-"chmod +x install.sh".
+Nominatim Automation Scripts
 
-The script can then be run with "./install.sh".
+This repository contains a set of scripts designed to simplify the setup and use of Nominatim for geocoding.
+It supports importing multiple OpenStreetMap (OSM) datasets in parallel, running reverse geocoding queries concurrently, and generating full address lists.
 
-IMPORTANT:
-The scripts expect the user to be VMadmin. If this is not your username,
-you can easily change it directly in the scripts.
+Features
 
-During installation, a directory called nominatim-project will be created
-inside the nominatim folder. All scripts go into this directory, including
-MASTER.py, info.txt, searchAllNode.py, round.py, and reverse.py.
+Automated installation of system dependencies and Python environment.
 
-The number of parallel threads can be adjusted according to your system.
-To do this, change the variable "MAX_THREADS" in MASTER.py.
+Parallel import of multiple OSM datasets into separate PostgreSQL databases.
 
-After completing all steps, CSV files will be generated containing all
-street names, postal codes, and cities from the datasets. Afterward, the
-PostgreSQL databases must be deleted, since new databases like data1,
-data2, etc., will be created again.
+Parallel reverse geocoding of coordinates to generate complete address lists.
+
+Fully configurable thread counts to match system specifications.
+
+Easy-to-use scripts with minimal manual setup.
+
+steps:
+
+Prepare the environment
+
+Install dos2unix to ensure the install script works properly:
+sudo apt install dos2unix
+
+Make the install script executable:
+chmod +x install.sh
+
+Run the installation script
+
+Execute:
+./install.sh
+
+The script will:
+
+Install all required system dependencies (PostgreSQL, PostGIS, build tools, Python development packages).
+
+Create a Python virtual environment in nominatim/nominatim-venv.
+
+Install all necessary Python packages for the scripts and Nominatim.
+
+Set up project directories.
+
+Project Structure
+
+After installation, the directory nominatim/nominatim-project will be created. there you put the main scripts:
+
+MASTER.py – orchestrates parallel processing and reverse geocoding.
+
+info.txt – contains dataset download links.
+
+searchAllNode.py – handles node-based searches.
+
+round.py – rounds coordinates if necessary.
+
+reverse.py – performs reverse geocoding using Nominatim.
+
+The virtual environment is located at nominatim/nominatim-venv.
+
+Configuration
+
+Parallel Threads:
+The number of threads can be adjusted depending on system specifications.
+Change the variable MAX_THREADS in MASTER.py to configure parallel execution.
+
+Database User:
+Scripts expect the user VMadmin by default. If your username differs, update it in the scripts accordingly.
+
+
+Activate the virtual environment:
+
+the install.sh script will heve createt shortcuts vor running the server and starting the venv.
+
+type nvenv to start the virtual envirement
+
+to test if the servers are running type nserve  and then exit with ctlr + C to stop.
+
+
+
+Workflow
+
+Import datasets
+Each dataset (e.g., data1, data2) must be imported into a separate PostgreSQL database.
+This step creates all necessary tables, including import_status, placex, and others required for geocoding.
+
+Run reverse geocoding
+After datasets are imported, reverse.py or MASTER.py can be run to generate full address lists.
+The output CSV files include:
+
+Coordinates (lat, lon)
+
+Street names
+
+Postal codes
+
+City names
+
+Post-processing
+After all CSV files are generated, PostgreSQL databases can be deleted if you want to start a fresh import.
+
+Notes
+if something with the servers doesn´t seem right:
+Make sure the Nominatim server is not running multiple instances on the same port, or the scripts will fail to start.
+
+
+Primary Use Case
+
+This setup is ideal for generating a complete address database from multiple OSM datasets.
+It is designed to:
+
+Handle multiple datasets efficiently with parallel processing.
+
+Produce a comprehensive list of coordinates, street names, cities, and postal codes for further analysis or applications.
