@@ -10,9 +10,9 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 
-# --- Konfiguration ---
+# --- configuration ---
 NOMINATIM_URL = "http://localhost:8088/reverse"
-DELAY = 0.05  # 50ms zwischen Requests
+DELAY = 0.05  # 50ms between requests
 MAX_THREADS = 16
 DB_USER = "VMadmin"
 DB_PASS = "Qwdg2302"
@@ -22,10 +22,10 @@ csv_lock = Lock()
 cache = {}
 
 def start_nominatim_server(db_name):
-    """Startet Nominatim-Server mit passender DB"""
-    # libpq-Format: dbname=... user=... password=... host=...
+    """Start Nominatim server on the corresponding DB"""
+    # libpq format: dbname=... user=... password=... host=...
     dsn = f"dbname={db_name} user={DB_USER} password={DB_PASS} host={HOST}"
-    print(f"Starte Nominatim-Server für DB '{db_name}' ...")
+    print(f"Starting Nominatim server for DB '{db_name}' ...")
 
     process = subprocess.Popen(
         [
@@ -38,32 +38,32 @@ def start_nominatim_server(db_name):
         stderr=subprocess.DEVNULL,
     )
 
-    # Warten, bis Server erreichbar ist
+    # Wait until server is reachable
     for i in range(30):
         try:
             r = requests.get("http://localhost:8088/status", timeout=1)
             if r.status_code == 200:
-                print("✅ Nominatim-Server läuft.")
+                print("Nominatim server is running.")
                 return process
         except:
             pass
         time.sleep(1)
 
-    print("⚠️  Serverstart fehlgeschlagen.")
+    print(f"Failed to start server at {NOMINATIM_URL}.")
     process.terminate()
     return None
 
 
-
 def stop_nominatim_server(process):
-    """Beendet den Nominatim-Server-Prozess"""
+    """Stop Nominatim server"""
     if process:
         process.terminate()
         try:
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             process.kill()
-        print("🛑 Nominatim-Server gestoppt.\n")
+        print("Nominatim server stopped.\n")
+
 
 def reverse_geocode(node):
     lat = float(node["lat"])
@@ -84,23 +84,24 @@ def reverse_geocode(node):
         city = address.get("city", "") or address.get("town", "") or address.get("village", "")
         cache[key] = (road, postcode, city)
     except Exception as e:
-        print(f"Fehler bei Node {place_id}: {e}")
+        print(f"Error on node {place_id}: {e}")
         road = postcode = city = ""
 
     time.sleep(DELAY)
     return place_id, lat, lon, road, postcode, city
+
 
 def process_csv(input_file):
     suffix = input_file.split("_")[-1].split(".")[0]
     db_name = f"data{suffix}"
     output_file = f"completeList_{suffix}.csv"
 
-    print(f"\n=== Verarbeite {input_file} auf DB {db_name} ===")
+    print(f"\n=== Processing {input_file} in DB {db_name} ===")
 
-    # Server starten
+    # Start server
     process = start_nominatim_server(db_name)
     if not process:
-        print(f"❌ Konnte Nominatim-Server für {db_name} nicht starten.")
+        print(f"Couldn't start server for {db_name}.")
         return
 
     with open(output_file, "w", newline="", encoding="utf-8") as f_out:
@@ -112,7 +113,7 @@ def process_csv(input_file):
             reader = csv.DictReader(f_in)
             nodes = list(reader)
 
-        print(f"{len(nodes)} Nodes geladen, Verarbeitung mit {MAX_THREADS} Threads...")
+        print(f"{len(nodes)} nodes loaded, processing with {MAX_THREADS} threads...")
 
         with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
             future_to_node = {executor.submit(reverse_geocode, node): node for node in nodes}
@@ -131,18 +132,19 @@ def process_csv(input_file):
                     })
                 processed += 1
                 if processed % 1000 == 0:
-                    print(f">>> {processed} Nodes verarbeitet...")
+                    print(f">>> {processed} nodes processed...")
 
     stop_nominatim_server(process)
-    print(f"=== Verarbeitung von {input_file} abgeschlossen. Ergebnisse gespeichert in '{output_file}' ===")
+    print(f"=== Processing for {input_file} done. Output saved in '{output_file}' ===")
+
 
 if __name__ == "__main__":
     csv_files = sorted(glob.glob("allNodesRounded_*.csv"))
     if not csv_files:
-        print("Keine passenden CSV-Dateien gefunden.")
+        print("Couldn't find suitable CSV files.")
         exit(1)
 
     for csv_file in csv_files:
         process_csv(csv_file)
 
-    print("\nAlle Aufgaben abgeschlossen.")
+    print("\nAll jobs finished.")

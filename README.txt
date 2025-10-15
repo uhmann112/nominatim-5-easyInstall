@@ -19,7 +19,13 @@ steps:
 
 Prepare the environment
 
-Install dos2unix to ensure the install script works properly:
+you have to have installed:
+-pip3
+-python3
+-PyICU
+-osm2pgsql
+
+also install dos2unix to ensure the install script works properly:
 sudo apt install dos2unix
 
 Make the install script executable:
@@ -73,6 +79,12 @@ the install.sh script will have created shortcuts for running the server and sta
 type nvenv to start the virtual environment
 
 to test if the servers are running type nserve  and then exit with ctlr + C to stop.
+
+if the shortcuts don´t  work run following comands in the shell:
+
+echo "alias nvenv='source /home/VMadmin/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> /home/VMadmin/.bashrc
+echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve'" >> /home/VMadmin/.bashrc
+
 
 
 

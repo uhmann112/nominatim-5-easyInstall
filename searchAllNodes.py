@@ -6,24 +6,24 @@ import os
 import psycopg
 import sys
 
-# Argumente auslesen
-dbName = sys.argv[1]      # z.B. "data1"
-suffix = sys.argv[2]      # z.B. "1"
+# Read arguments
+dbName = sys.argv[1]      # e.g., "data1"
+suffix = sys.argv[2]      # e.g., "1"
+
 # =====================
-# KONFIGURATION
+# CONFIGURATION
 # =====================
 DB_NAME = dbName
 DB_USER = os.getenv("DB_USER", "VMadmin")
 DB_PASS = os.getenv("DB_PASS", "Qwdg2302")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = int(os.getenv("DB_PORT", 5432))
-suffix = suffix
 OUTPUT_FILE = f"allNodes_{suffix}.csv"
 
-print(f"searchAllnodes startet mit durchsuchen von db: {DB_NAME}")
+print(f"searchAllnodes started, scanning DB: {DB_NAME}")
 
 # =====================
-# SQL QUERY: ALLE NODES MIT COORDINATEN
+# SQL QUERY: ALL NODES WITH COORDINATES
 # =====================
 query = """
 SELECT
@@ -35,7 +35,7 @@ WHERE centroid IS NOT NULL;
 """
 
 # =====================
-# DB VERBINDUNG UND DATEN LADEN
+# DB CONNECTION AND DATA LOADING
 # =====================
 try:
     with psycopg.connect(
@@ -43,20 +43,20 @@ try:
         host=DB_HOST, port=DB_PORT
     ) as conn:
         with conn.cursor() as cur:
-            print(f" Verbunden mit DB '{DB_NAME}' erfolgreich.")
+            print(f"Connected to DB '{DB_NAME}' successfully.")
             cur.execute(query)
             rows = cur.fetchall()
-            print(f" {len(rows)} Nodes geladen.")
+            print(f"{len(rows)} nodes loaded.")
 except Exception as e:
-    print(" Fehler bei der Verbindung:", e)
+    print("Error connecting to DB:", e)
     exit(1)
 
 # =====================
-# CSV SCHREIBEN
+# WRITE CSV
 # =====================
 with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     writer.writerow(["place_id", "lat", "lon"])
     writer.writerows(rows)
 
-print(f" Alle Nodes wurden in '{OUTPUT_FILE}' gespeichert.")
+print(f"All nodes have been saved in '{OUTPUT_FILE}'.")

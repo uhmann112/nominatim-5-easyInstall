@@ -73,7 +73,7 @@ EOSQL
 echo "Benutzer 'nominatim' und 'www-data' wurden erstellt."
 
 
-export NOMINATIM_DATABASE_DSN="pgsql:dbname=${PG_DB} user=${PG_USER} password=Qwdg2302 host=localhost"
+export NOMINATIM_DATABASE_DSN="pgsql:dbname=${PG_DB} user=\"VMadmin\" password=Qwdg2302 host=localhost"
 
 
 # --- Done ---
@@ -87,6 +87,8 @@ echo "nvenv  and nserve"
 echo "python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve"
 
 sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='VMadmin'" | grep -q 1 || sudo -u postgres createuser VMadmin --superuser
+
+sudo -u postgres psql -c "ALTER USER VMadmin WITH PASSWORD 'Qwdg2302';"
 
 echo "alias nvenv='source ~/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> ~/.bashrc
 source ~/.bashrc
