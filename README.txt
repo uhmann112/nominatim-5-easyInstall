@@ -75,6 +75,12 @@ Scripts expect the user VMadmin by default. If your username differs, update it 
 Activate the virtual environment:
 
 the install.sh script will have created shortcuts for running the server and starting the venv.
+just enable them with :
+
+source /home/VMadmin/.bashrc
+
+
+
 
 type nvenv to start the virtual environment
 
