@@ -1,9 +1,9 @@
-#Nominatim Automation Scripts
+# Nominatim Automation Scripts
 
 This repository contains a set of scripts designed to simplify the setup and use of Nominatim for geocoding.
 It supports importing multiple OpenStreetMap (OSM) datasets in parallel, running reverse geocoding queries concurrently, and generating full address lists.
 
-##Features
+## Features
 
 Automated installation of system dependencies and Python environment.
 
@@ -15,7 +15,7 @@ Fully configurable thread counts to match system specifications.
 
 Easy-to-use scripts with minimal manual setup.
 
-##steps:
+## steps:
 
 Prepare the environment
 
@@ -41,7 +41,7 @@ Execute:
 ./install.sh
 ```
 
-##The script will:
+## The script will:
 
 Install all required system dependencies (PostgreSQL, PostGIS, build tools, Python development packages).
 
@@ -67,7 +67,7 @@ reverse.py – performs reverse geocoding using Nominatim.
 
 The virtual environment is located at nominatim/nominatim-venv.
 
-##Configuration
+## Configuration
 
 Parallel Threads:
 The number of threads can be adjusted depending on system specifications.
@@ -101,7 +101,7 @@ echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-c
 
 
 
-##Workflow
+## Workflow
 
 Import datasets
 put your osm downloadlinks in info.txt (1 link per row, no empty rows!!!), then run the MASTER.py script:
@@ -135,7 +135,7 @@ if something with the servers doesn´t seem right:
 Make sure the Nominatim server is not running multiple instances on the same port, or the scripts will fail to start.
 
 
-##Primary Use Case
+## Primary Use Case
 
 This setup is ideal for generating a complete address database from multiple OSM datasets.
 It is designed to:
@@ -143,3 +143,6 @@ It is designed to:
 Handle multiple datasets efficiently with parallel processing.
 
 Produce a comprehensive list of coordinates, street names, cities, and postal codes for further analysis or applications.
+
+
+# have fun!!
