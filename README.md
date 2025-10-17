@@ -31,8 +31,9 @@ sudo apt install dos2unix
 dos2unix install.sh
 ```
 Make the install script executable:
+```bash
 chmod +x install.sh
-
+```
 Run the installation script
 
 Execute:
@@ -103,11 +104,17 @@ echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-c
 Workflow
 
 Import datasets
-put your osm downloadlinks in info.txt (1 link per row, no empty rows!!!), then run the MASTER.py script
+put your osm downloadlinks in info.txt (1 link per row, no empty rows!!!), then run the MASTER.py script:
+```bash
+python3 MASTER.py
+```
 This step creates all necessary tables, including import_status, placex, and others required for geocoding.
 
 Run reverse geocoding
 After datasets are imported, reverse.py  can be run to generate full address lists.
+```bash
+python3 reverse.py
+```
 The output CSV files include:
 
 Coordinates (lat, lon)
