@@ -1,4 +1,4 @@
-# Nominatim Automation Scripts
+# <p align="center">Nominatim Automation Scripts</p>
 
 This repository contains a set of scripts designed to simplify the setup and use of Nominatim for geocoding.
 It supports importing multiple OpenStreetMap (OSM) datasets in parallel, running reverse geocoding queries concurrently, and generating full address lists.
