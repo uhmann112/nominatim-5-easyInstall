@@ -26,15 +26,19 @@ you have to have installed:
 -osm2pgsql
 
 also install dos2unix to ensure the install script works properly:
+```bash
 sudo apt install dos2unix
-
+dos2unix install.sh
+```
 Make the install script executable:
 chmod +x install.sh
 
 Run the installation script
 
 Execute:
+```bash
 ./install.sh
+```
 
 The script will:
 
@@ -76,8 +80,9 @@ Activate the virtual environment:
 
 the install.sh script will have created shortcuts for running the server and starting the venv.
 just enable them with :
-
+```bash
 source /home/VMadmin/.bashrc
+```
 
 
 
@@ -88,9 +93,10 @@ to test if the servers are running type nserve  and then exit with ctlr + C to s
 
 if the shortcuts don´t  work run following comands in the shell:
 
+```Bash
 echo "alias nvenv='source /home/VMadmin/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> /home/VMadmin/.bashrc
 echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve'" >> /home/VMadmin/.bashrc
-
+```
 
 
 
@@ -109,6 +115,8 @@ Coordinates (lat, lon)
 Street names
 
 Postal codes
+
+
 
 City names
 
