@@ -59,7 +59,7 @@ source nominatim-venv/bin/activate
 
 pip install --upgrade pip setuptools wheel
 pip install "uvicorn[standard]"
-pip install psycopg[binary] uvicorn[standard] SQLAlchemy click Jinja2 falcon psutil  PyICU requests
+pip install  pyyaml psycopg[binary] uvicorn[standard] SQLAlchemy click Jinja2 falcon psutil  PyICU requests python-dotenv
 
 
 cd ~/nominatim/nominatim-source/data
