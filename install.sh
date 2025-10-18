@@ -21,13 +21,16 @@ sudo apt install -y \
   libexpat1-dev zlib1g-dev libxml2-dev libpq-dev libbz2-dev libproj-dev \
   postgresql postgresql-contrib postgis postgresql-postgis-scripts \
   python3 python3-pip python3-psycopg2 python3-setuptools python3-dev \
-  git wget curl
+  git wget curl pkg-config libicu-dev python3.12-venv
 
 # --- Remove old installation ---
 sudo systemctl stop nominatim || true
 sudo systemctl disable nominatim || true
 sudo rm -rf ${NOMINATIM_DIR}
 
+sudo -u postgres dropdb --if-exists nominatim
+sudo -u postgres dropuser --if-exists nominatim
+sudo -u postgres dropuser --if-exists www-data
 sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${PG_DB};" || true
 sudo -u postgres psql -c "DROP ROLE IF EXISTS ${PG_USER};" || true
 
@@ -57,7 +60,7 @@ wget https://nominatim.org/data/country_grid.sql.gz -O country_osm_grid.sql.gz
 
 # --- Setup PostgreSQL user and database ---
 sudo -u postgres createuser -s ${PG_USER} || true
-sudo -u postgres createdb -E UTF8 -O ${PG_USER} ${PG_DB} || true
+sudo -u postgres createdb -E UTF8 -O ${PG_USER} ${PG_DB} --template=template0 || true
 sudo -u postgres psql -d ${PG_DB} -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 sudo -u postgres psql -d ${PG_DB} -c "CREATE EXTENSION IF NOT EXISTS hstore;"
 
