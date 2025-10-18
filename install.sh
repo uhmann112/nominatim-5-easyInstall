@@ -47,9 +47,16 @@ cd nominatim-source
 git checkout $(git tag | grep -v rc | tail -1)
 
 # --- Setup Python virtual environment ---
-python3 -m venv nominatim-venv
-cd ~/nominatim/nominatim-source
+if ! python3 -m venv nominatim-venv; then
+    echo "python3-venv fehlt! Installiere es jetzt..."
+    sudo apt install -y python3.12-venv
+    python3 -m venv nominatim-venv
+fi
+
 source nominatim-venv/bin/activate
+
+
+
 pip install --upgrade pip setuptools wheel
 pip install "uvicorn[standard]"
 pip install psycopg[binary] uvicorn[standard] SQLAlchemy click Jinja2 falcon psutil  PyICU requests
