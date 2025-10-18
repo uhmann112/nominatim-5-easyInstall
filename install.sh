@@ -19,8 +19,8 @@ sudo apt upgrade -y
 sudo apt install -y \
   build-essential cmake g++ libboost-all-dev \
   libexpat1-dev zlib1g-dev libxml2-dev libpq-dev libbz2-dev libproj-dev \
-  postgresql postgresql-contrib postgis postgresql-postgis-scripts \
-  python3.10 python3.10-venv python3-pip python3-psycopg2 python3-setuptools python3-dev \
+  postgresql postgresql-contrib postgis osm2pgsql postgresql-postgis-scripts \
+  python3.12 python3.12-venv python3-pip python3-psycopg2 python3-setuptools python3-dev \
   git wget curl pkg-config libicu-dev
 
 # --- Remove old installation ---
@@ -51,7 +51,7 @@ if grep -q "version_parts = version.split('.')" "$CONNECTION_FILE"; then
 fi
 
 # --- Setup Python virtual environment ---
-python3.10 -m venv nominatim-venv
+python3.12 -m venv nominatim-venv
 source nominatim-venv/bin/activate
 pip install --upgrade pip setuptools wheel
 pip install "uvicorn[standard]"
