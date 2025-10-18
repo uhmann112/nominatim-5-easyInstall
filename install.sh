@@ -63,9 +63,11 @@ wget https://nominatim.org/data/country_grid.sql.gz -O country_osm_grid.sql.gz
 
 # --- Setup PostgreSQL user and database ---
 sudo -u postgres createuser -s ${PG_USER} || true
-sudo -u postgres createdb -E UTF8 -O ${PG_USER} ${PG_DB} --template=template0 || true
+sudo -u postgres dropdb --if-exists ${PG_DB}
+sudo -u postgres createdb -E UTF8 -O ${PG_USER} ${PG_DB} --template=template0
 sudo -u postgres psql -d ${PG_DB} -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 sudo -u postgres psql -d ${PG_DB} -c "CREATE EXTENSION IF NOT EXISTS hstore;"
+
 
 sudo -u postgres psql <<EOSQL
 CREATE USER "www-data" WITH PASSWORD 'Qwdg2302';
