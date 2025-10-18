@@ -20,19 +20,17 @@ sudo apt install -y \
   build-essential cmake g++ libboost-all-dev \
   libexpat1-dev zlib1g-dev libxml2-dev libpq-dev libbz2-dev libproj-dev \
   postgresql postgresql-contrib postgis postgresql-postgis-scripts \
-  python3 python3-pip python3-psycopg2 python3-setuptools python3-dev \
-  git wget curl pkg-config libicu-dev python3.12-venv
+  python3.10 python3.10-venv python3-pip python3-psycopg2 python3-setuptools python3-dev \
+  git wget curl pkg-config libicu-dev
 
 # --- Remove old installation ---
 sudo systemctl stop nominatim || true
 sudo systemctl disable nominatim || true
 sudo rm -rf ${NOMINATIM_DIR}
 
-sudo -u postgres dropdb --if-exists nominatim
-sudo -u postgres dropuser --if-exists nominatim
+sudo -u postgres dropdb --if-exists ${PG_DB}
+sudo -u postgres dropuser --if-exists ${PG_USER}
 sudo -u postgres dropuser --if-exists www-data
-sudo -u postgres psql -c "DROP DATABASE IF EXISTS ${PG_DB};" || true
-sudo -u postgres psql -c "DROP ROLE IF EXISTS ${PG_USER};" || true
 
 # --- Create directories ---
 cd ~
@@ -46,22 +44,20 @@ cd nominatim-source
 # --- Clone Nominatim ---
 git checkout $(git tag | grep -v rc | tail -1)
 
-# --- Setup Python virtual environment ---
-if ! python3 -m venv nominatim-venv; then
-    echo "python3-venv fehlt! Installiere es jetzt..."
-    sudo apt install -y python3.12-venv
-    python3 -m venv nominatim-venv
+# --- Patch connection.py für Python 3.12+ ---
+CONNECTION_FILE="src/nominatim_db/db/connection.py"
+if grep -q "version_parts = version.split('.')" "$CONNECTION_FILE"; then
+    sed -i "s/version_parts = version.split('.')/version_parts = version.decode('utf-8').split('.') if isinstance(version, bytes) else version.split('.')/" "$CONNECTION_FILE"
 fi
 
+# --- Setup Python virtual environment ---
+python3.10 -m venv nominatim-venv
 source nominatim-venv/bin/activate
-
-
-
 pip install --upgrade pip setuptools wheel
 pip install "uvicorn[standard]"
-pip install  pyyaml psycopg[binary] uvicorn[standard] SQLAlchemy click Jinja2 falcon psutil  PyICU requests python-dotenv
+pip install psycopg[binary] uvicorn[standard] SQLAlchemy click Jinja2 falcon psutil PyICU requests PyYAML python-dotenv
 
-
+# --- Download country grid ---
 cd ~/nominatim/nominatim-source/data
 wget https://nominatim.org/data/country_grid.sql.gz -O country_osm_grid.sql.gz
 
@@ -71,35 +67,26 @@ sudo -u postgres createdb -E UTF8 -O ${PG_USER} ${PG_DB} --template=template0 ||
 sudo -u postgres psql -d ${PG_DB} -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 sudo -u postgres psql -d ${PG_DB} -c "CREATE EXTENSION IF NOT EXISTS hstore;"
 
-
-# Als postgres-Benutzer psql starten und die User erstellen
 sudo -u postgres psql <<EOSQL
-
-
-
 CREATE USER "www-data" WITH PASSWORD 'Qwdg2302';
 EOSQL
 
 echo "Benutzer 'nominatim' und 'www-data' wurden erstellt."
 
-
 export NOMINATIM_DATABASE_DSN="pgsql:dbname=${PG_DB} user=\"VMadmin\" password=Qwdg2302 host=localhost"
-
 
 # --- Done ---
 echo "Nominatim installation scaffold created at ${NOMINATIM_DIR}."
 echo "Next steps:"
 echo "1. copy osm-data links into nominatim-project/info.txt"
-echo "2. Start venv with nvenv and start master script with python3 MASTER.py "
+echo "2. Start venv with nvenv and start master script with python3 MASTER.py"
 echo "3. start the reverse geocoding with python3 reverse.py"
 
 echo "nvenv  and nserve"
 echo "python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve"
 
 sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='VMadmin'" | grep -q 1 || sudo -u postgres createuser VMadmin --superuser
-
 sudo -u postgres psql -c 'ALTER USER "VMadmin" WITH PASSWORD '\''Qwdg2302'\'';'
 
 echo "alias nvenv='source /home/VMadmin/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> /home/VMadmin/.bashrc
 echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve'" >> /home/VMadmin/.bashrc
-
