@@ -26,17 +26,22 @@ you have to have installed:
 -osm2pgsql
 
 also install dos2unix to ensure the install script works properly:
+
 ```bash
 sudo apt install dos2unix
 dos2unix install.sh
 ```
+
 Make the install script executable:
+
 ```bash
 chmod +x install.sh
 ```
+
 Run the installation script
 
 Execute:
+
 ```bash
 ./install.sh
 ```
@@ -76,45 +81,55 @@ Change the variable MAX_THREADS in MASTER.py to configure parallel execution.
 Database User:
 Scripts expect the user VMadmin by default. If your username differs, update it in the scripts accordingly.
 
-
 Activate the virtual environment:
 
 the install.sh script will have created shortcuts for running the server and starting the venv.
 just enable them with :
+
 ```bash
 source /home/VMadmin/.bashrc
 ```
 
-
-
-
 type nvenv to start the virtual environment
 
-to test if the servers are running type nserve  and then exit with ctlr + C to stop.
+to test if the servers are running type nserve and then exit with ctlr + C to stop.
 
-if the shortcuts don´t  work run following comands in the shell:
+if the shortcuts don´t work run following comands in the shell:
 
 ```Bash
 echo "alias nvenv='source /home/VMadmin/nominatim/nominatim-source/nominatim-venv/bin/activate'" >> /home/VMadmin/.bashrc
 echo "alias nserve='python3 /home/VMadmin/nominatim/nominatim-source/nominatim-cli.py serve'" >> /home/VMadmin/.bashrc
 ```
 
-
-
 ## Workflow
+
+## setting up configuration
+
+postgresql sometimes gets confused with character encoding so we just force it into utf8 :)
+
+```sql
+UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
+DROP DATABASE template1;
+CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE='C' LC_CTYPE='C';
+UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1';
+```
 
 Import datasets
 put your osm downloadlinks in info.txt (1 link per row, no empty rows!!!), then run the MASTER.py script:
+
 ```bash
 python3 MASTER.py
 ```
+
 This step creates all necessary tables, including import_status, placex, and others required for geocoding.
 
 Run reverse geocoding
-After datasets are imported, reverse.py  can be run to generate full address lists.
+After datasets are imported, reverse.py can be run to generate full address lists.
+
 ```bash
 python3 reverse.py
 ```
+
 The output CSV files include:
 
 Coordinates (lat, lon)
@@ -123,17 +138,14 @@ Street names
 
 Postal codes
 
-
-
 City names
 
 Post-processing
 After all CSV files are generated, PostgreSQL databases can be deleted if you want to start a fresh import.
 
 Notes
-if something with the servers doesn´t seem right:   
+if something with the servers doesn´t seem right:  
 Make sure the Nominatim server is not running multiple instances on the same port, or the scripts will fail to start.
-
 
 ## Primary Use Case
 
@@ -143,6 +155,5 @@ It is designed to:
 Handle multiple datasets efficiently with parallel processing.
 
 Produce a comprehensive list of coordinates, street names, cities, and postal codes for further analysis or applications.
-
 
 # have fun!!

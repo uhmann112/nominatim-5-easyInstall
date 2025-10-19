@@ -4,7 +4,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Maximum number of simultaneous threads
-MAX_WORKERS = 3  # adjust depending on CPU/SSD
+MAX_WORKERS = 2 # adjust depending on CPU/SSD
 
 # File with download links
 infoFile = "info.txt"
